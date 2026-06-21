@@ -1523,7 +1523,14 @@
         // 3. Gate on the server wallet config (tier_3 apex => enabled).
         return fetchWalletConfig(cfg.apiBaseUrl, minted.sessionId).then(
           function (walletCfg) {
-            if (isStale() || !walletCfg || !walletCfg.enable_wallets) return null;
+            // No isStale() here: once a chain reaches the config step we
+            // always render. On a multi-plugin checkout (crypto/Zelle
+            // here) co-installed gateways fire their own `updated_checkout`,
+            // which would bump the bootstrap token and make an in-flight
+            // render go stale — leaving NO wallet button at all. Render is
+            // idempotent (renderWalletBlock removes any prior block), so a
+            // late/duplicate render is harmless; a missing button is not.
+            if (!walletCfg || !walletCfg.enable_wallets) return null;
             walletCfg.session_id = minted.sessionId;
             walletCfg.wc_order_id = minted.wcOrderId;
             walletCfg.order_received_url = minted.orderReceivedUrl || "";
@@ -1532,7 +1539,7 @@
         );
       })
       .then(function (walletCfg) {
-        if (isStale() || !walletCfg || !walletCfg.enable_wallets) return;
+        if (!walletCfg || !walletCfg.enable_wallets) return;
         // 4. Render IMMEDIATELY. Apple Pay must NEVER wait on the Google
         //    Pay SDK. Previously this awaited prepareGooglePayReadiness()
         //    before rendering, so a slow/blocked pay.google.com load
@@ -1548,7 +1555,7 @@
         if (walletCfg.google_pay_enabled && walletCfg.basis_theory_tenant_id) {
           prepareGooglePayReadiness(walletCfg)
             .then(function (readyCfg) {
-              if (isStale() || !readyCfg || !readyCfg.google_pay_ready) return;
+              if (!readyCfg || !readyCfg.google_pay_ready) return;
               renderWalletBlock(readyCfg);
             })
             .catch(function () {});
