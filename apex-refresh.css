@@ -1,0 +1,375 @@
+/* APEX STOREFRONT REFRESH — managed block (Veyra). Remove this whole block to revert. v1 2026-06-21 */
+/* ===================================================================
+   APEX PEPTIDE SUPPLY — VISUAL REFRESH (SAFETY-REVIEWED)
+   WP Customizer > Additional CSS. Additive, reversible, no theme edits.
+   Identity: navy/blue scientific. Polish borrowed from evobones/axis.
+
+   HARD GUARDRAIL: nothing here targets checkout/payment. No rules on
+   .woocommerce-checkout, #payment, #order_review, form.checkout,
+   .checkout-button, #place_order, .veyragate-pay-*, [data-veyra-*],
+   .veyra-drawer*. The Veyra plugin owns those surfaces.
+
+   REVIEW EDITS (vs. submitted draft):
+   - REMOVED the catalog-wide "Batch COA verified" ::before chip. A CSS
+     pseudo-element stamps that claim on EVERY product title in EVERY
+     loop (related/cross-sell/up-sell/cart), regardless of whether a COA
+     exists for that SKU — a fabricated per-product compliance claim.
+     RUO/evidence rule: do not invent compliance evidence in markup.
+   - RE-SCOPED the .woocommerce-info notice restyle to cart/account only.
+     The draft's ".woocommerce-page .woocommerce-info" also restyles
+     notices rendered on the CHECKOUT page (validation / coupon / info
+     messages). Checkout surface stays untouched.
+   - Added a safe fallback to .apex-section padding var (was undefined).
+   =================================================================== */
+
+:root{
+  --apex-navy:#1a2b5e; --apex-navy-deep:#0f1b2d; --apex-navy-700:#243a78;
+  --apex-ink:#16203a; --apex-body:#3a4458; --apex-muted:#6b7585;
+  --apex-bg:#f4f6fa; --apex-card:#ffffff; --apex-band:#eef2f8;
+  --apex-line:#dce3ee; --apex-line-soft:rgba(26,43,94,0.10);
+  --apex-accent:#2f7fb5; --apex-accent-soft:#e8f1f8; --apex-accent-ink:#185074;
+  --apex-radius-card:16px; --apex-radius-btn:999px;
+  --apex-shadow-rest:0 1px 2px rgba(16,32,58,0.04);
+  --apex-shadow-hov:0 18px 40px -22px rgba(26,43,94,0.45);
+}
+
+/* -------------------------------------------------------------------
+   1. PAGE GROUND — warm-cool neutral instead of stark white.
+      Scoped to body classes; checkout still inherits its own plugin
+      surface (we don't touch #order_review).
+   ------------------------------------------------------------------- */
+body.woocommerce,
+body.woocommerce-page,
+body.archive,
+body.single-product,
+body.home{
+  background-color:var(--apex-bg);
+}
+
+/* -------------------------------------------------------------------
+   2. ANNOUNCEMENT / TRUST BAR (for an injected .apex-announce-bar).
+      Harmless if no element exists (no element = no paint).
+   ------------------------------------------------------------------- */
+.apex-announce-bar{
+  background:var(--apex-navy-deep);
+  color:#eaf0fb;
+  font-size:13px;
+  letter-spacing:.045em;
+  text-align:center;
+  padding:9px 16px;
+  font-weight:600;
+}
+.apex-announce-bar strong{ color:#fff; font-weight:700; }
+.apex-announce-bar .sep{ opacity:.45; padding:0 .55em; }
+
+/* -------------------------------------------------------------------
+   3. TYPOGRAPHY — refine weight/tracking only; keep theme font family.
+   ------------------------------------------------------------------- */
+.single-product .product_title,
+.woocommerce-products-header__title,
+.entry-title,
+h1.entry-title{
+  color:var(--apex-ink);
+  letter-spacing:-0.012em;
+  line-height:1.12;
+  font-weight:700;
+}
+
+/* Uppercase wide-tracked cyan eyebrow. Apply via class .apex-kicker. */
+.apex-kicker{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  color:var(--apex-accent);
+  margin-bottom:.5rem;
+}
+
+/* Cap measure + airier leading on long research/COA copy */
+.single-product .woocommerce-product-details__short-description,
+.woocommerce-Tabs-panel,
+.entry-content p{
+  line-height:1.62;
+}
+.woocommerce-Tabs-panel,
+.single-product .woocommerce-product-details__short-description{
+  max-width:68ch;
+}
+
+/* -------------------------------------------------------------------
+   4. SHOP GRID — product cards.
+   ------------------------------------------------------------------- */
+ul.products li.product{
+  background:var(--apex-card);
+  border:1px solid var(--apex-line);
+  border-radius:var(--apex-radius-card);
+  box-shadow:var(--apex-shadow-rest);
+  padding:14px 14px 18px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  display:flex;
+  flex-direction:column;
+}
+ul.products li.product:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--apex-shadow-hov);
+  border-color:var(--apex-line-soft);
+}
+
+/* Vial images: square frame, never crop the powder shot */
+ul.products li.product a img,
+ul.products li.product img{
+  aspect-ratio:1/1;
+  object-fit:contain;
+  width:100%;
+  height:auto;
+  background:var(--apex-band);
+  border-radius:12px;
+  margin-bottom:.85rem;
+  transition:transform .45s ease;
+}
+ul.products li.product:hover img{ transform:scale(1.035); }
+
+/* Title: heavier, navy, tidy rhythm */
+ul.products li.product .woocommerce-loop-product__title{
+  color:var(--apex-ink);
+  font-size:var(--apex-fs-card,1.06rem);
+  font-weight:600;
+  line-height:1.3;
+  letter-spacing:-0.005em;
+  padding:0 0 .35rem;
+}
+
+/* Price: navy, with "From" framing for variable products (CSS label
+   only — does NOT alter the actual price value). */
+ul.products li.product .price{
+  color:var(--apex-navy);
+  font-weight:700;
+  font-size:1rem;
+}
+ul.products li.product .price .woocommerce-Price-amount{ color:var(--apex-navy); }
+ul.products li.product.product_type_variable .price::before{
+  content:"From ";
+  color:var(--apex-muted);
+  font-weight:600;
+  font-size:.82em;
+}
+
+/* NOTE: the catalog-wide "Batch COA verified" ::before chip was REMOVED
+   in review. A pseudo-element stamps it on every product title in every
+   loop irrespective of whether that SKU has a COA — a fabricated
+   per-product compliance claim. If a COA badge is wanted, render it
+   per-product from real data via a template/snippet, not blanket CSS. */
+
+/* Push the CTA to the card bottom for equal-height cards */
+ul.products li.product .button{ margin-top:auto; }
+
+/* -------------------------------------------------------------------
+   5. BUTTON SYSTEM — storefront CTAs only.
+      EXCLUDES checkout: does NOT style .checkout-button, #place_order,
+      form.checkout button, or any veyra/payment control.
+   ------------------------------------------------------------------- */
+.woocommerce ul.products li.product .button,
+.woocommerce a.button.add_to_cart_button,
+.woocommerce a.button.product_type_variable,
+.single-product .single_add_to_cart_button,
+.fl-button,
+a.fl-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  background:linear-gradient(135deg,var(--apex-navy-700),var(--apex-navy));
+  color:#fff;
+  border:0;
+  border-radius:var(--apex-radius-btn);
+  font-weight:650;
+  letter-spacing:.01em;
+  line-height:1;
+  padding:.78rem 1.25rem;
+  min-height:46px;
+  box-shadow:0 10px 22px -12px rgba(26,43,94,0.55);
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.woocommerce ul.products li.product .button:hover,
+.woocommerce a.button.add_to_cart_button:hover,
+.woocommerce a.button.product_type_variable:hover,
+.single-product .single_add_to_cart_button:hover,
+.fl-button:hover,
+a.fl-button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.06);
+  box-shadow:0 16px 30px -14px rgba(26,43,94,0.6);
+  color:#fff;
+}
+.woocommerce ul.products li.product .button:active,
+.single-product .single_add_to_cart_button:active,
+.fl-button:active{ transform:translateY(0); }
+
+/* Secondary / outline variant — add class .apex-btn-outline */
+.apex-btn-outline,
+a.apex-btn-outline{
+  background:#fff !important;
+  color:var(--apex-navy) !important;
+  border:1px solid var(--apex-line) !important;
+  box-shadow:none !important;
+}
+.apex-btn-outline:hover,
+a.apex-btn-outline:hover{ background:var(--apex-band) !important; }
+
+/* Global focus ring (accessibility), navy not orange */
+.woocommerce a.button:focus-visible,
+.single_add_to_cart_button:focus-visible,
+.fl-button:focus-visible{
+  outline:3px solid var(--apex-accent);
+  outline-offset:3px;
+}
+
+/* -------------------------------------------------------------------
+   6. SINGLE PRODUCT — buy box polish (NOT the checkout form).
+   ------------------------------------------------------------------- */
+.single-product div.product .summary{
+  background:var(--apex-card);
+  border:1px solid var(--apex-line);
+  border-radius:var(--apex-radius-card);
+  box-shadow:var(--apex-shadow-rest);
+  padding:1.5rem 1.6rem;
+}
+.single-product div.product .summary .price,
+.single-product .woocommerce-variation-price .price{
+  color:var(--apex-navy);
+  font-weight:800;
+}
+
+/* Quantity stepper: bigger, 16px to kill iOS zoom */
+.woocommerce .quantity .qty{
+  width:66px;
+  height:46px;
+  font-size:16px;
+  text-align:center;
+  border:1px solid var(--apex-line);
+  border-radius:10px;
+}
+
+/* Trust row + RUO note — hooks for an injected block under the buy box.
+   Harmless if the block is absent. */
+.apex-trust-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45rem .9rem;
+  margin:1rem 0 .35rem;
+  font-size:13px;
+  color:var(--apex-body);
+}
+.apex-trust-row span{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  background:var(--apex-accent-soft);
+  color:var(--apex-accent-ink);
+  border-radius:999px;
+  padding:5px 11px;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:.02em;
+}
+.apex-ruo-note{
+  font-size:12px;
+  color:var(--apex-muted);
+  margin-top:.6rem;
+  line-height:1.5;
+}
+
+/* -------------------------------------------------------------------
+   7. CART (NOT checkout) — totals card + secure-note.
+      Re-scoped to .woocommerce-cart so checkout-page notices are NOT
+      restyled. Does NOT touch #order_review or .woocommerce-checkout.
+   ------------------------------------------------------------------- */
+.woocommerce-cart .cart_totals{
+  background:var(--apex-card);
+  border:1px solid var(--apex-line);
+  border-radius:var(--apex-radius-card);
+  box-shadow:var(--apex-shadow-rest);
+  padding:1.25rem 1.4rem;
+}
+.woocommerce-cart .cart_totals h2{
+  color:var(--apex-ink);
+  letter-spacing:-0.01em;
+}
+.apex-secure-note{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  margin-top:.85rem;
+  font-size:12.5px;
+  color:var(--apex-muted);
+}
+
+/* Empty-cart / cart-page info notice — scoped to the cart page only
+   (the draft's .woocommerce-page scope also hit the checkout page). */
+.woocommerce-cart .cart-empty.woocommerce-info,
+.woocommerce-cart .woocommerce-info{
+  background:var(--apex-card);
+  border:1px solid var(--apex-line);
+  border-left:4px solid var(--apex-accent);
+  border-radius:12px;
+  color:var(--apex-body);
+  box-shadow:var(--apex-shadow-rest);
+}
+
+/* -------------------------------------------------------------------
+   8. SECTION RHYTHM — class-gated; harmless until applied.
+   ------------------------------------------------------------------- */
+.apex-band{
+  background:var(--apex-band);
+}
+.apex-section{
+  padding-top:var(--apex-section-y,3rem);
+  padding-bottom:var(--apex-section-y,3rem);
+}
+
+/* -------------------------------------------------------------------
+   9. MOBILE
+   ------------------------------------------------------------------- */
+@media (max-width:768px){
+  ul.products li.product{ padding:12px 12px 16px; }
+  ul.products li.product .woocommerce-loop-product__title{ font-size:1rem; }
+  .single-product div.product .summary{ padding:1.15rem 1.1rem; }
+  .apex-trust-row{ font-size:12px; }
+
+  /* Sticky mobile CTA bar (for an injected .apex-sticky-atc). Inert
+     until the element + JS exist. The button must "Choose options" and
+     scroll to .variations_form — NOT direct add-to-cart. NOTE: this is
+     a position:fixed bottom bar; if activated, confirm on a real device
+     that it never overlaps the Veyra cart/payment drawer or its CTA. */
+  .apex-sticky-atc{
+    position:fixed; left:0; right:0; bottom:0; z-index:999;
+    display:flex; align-items:center; gap:.75rem;
+    background:rgba(255,255,255,.97);
+    backdrop-filter:saturate(140%) blur(8px);
+    border-top:1px solid var(--apex-line);
+    box-shadow:0 -8px 24px -16px rgba(26,43,94,.5);
+    padding:.6rem .9rem; padding-bottom:calc(.6rem + env(safe-area-inset-bottom));
+  }
+  .apex-sticky-atc .apex-sticky-meta{ flex:1; min-width:0; }
+  .apex-sticky-atc .apex-sticky-title{
+    font-size:13px; font-weight:700; color:var(--apex-ink);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .apex-sticky-atc .apex-sticky-price{ font-size:13px; color:var(--apex-navy); font-weight:700; }
+  .apex-sticky-atc .apex-sticky-btn{
+    flex:0 0 auto; background:linear-gradient(135deg,var(--apex-navy-700),var(--apex-navy));
+    color:#fff; border-radius:999px; padding:.65rem 1.1rem; font-weight:650; font-size:14px;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion:reduce){
+  ul.products li.product,
+  ul.products li.product img,
+  .woocommerce a.button,
+  .single_add_to_cart_button,
+  .fl-button{ transition:none !important; }
+  ul.products li.product:hover{ transform:none; }
+  ul.products li.product:hover img{ transform:none; }
+}
