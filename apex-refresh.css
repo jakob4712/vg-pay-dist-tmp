@@ -169,9 +169,9 @@ ul.products li.product .button{ margin-top:auto; }
       EXCLUDES checkout: does NOT style .checkout-button, #place_order,
       form.checkout button, or any veyra/payment control.
    ------------------------------------------------------------------- */
-.woocommerce ul.products li.product .button,
-.woocommerce a.button.add_to_cart_button,
-.woocommerce a.button.product_type_variable,
+ul.products li.product .button,
+a.button.add_to_cart_button,
+a.button.product_type_variable,
 .single-product .single_add_to_cart_button,
 .fl-button,
 a.fl-button{
@@ -191,9 +191,9 @@ a.fl-button{
   box-shadow:0 10px 22px -12px rgba(26,43,94,0.55);
   transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
-.woocommerce ul.products li.product .button:hover,
-.woocommerce a.button.add_to_cart_button:hover,
-.woocommerce a.button.product_type_variable:hover,
+ul.products li.product .button:hover,
+a.button.add_to_cart_button:hover,
+a.button.product_type_variable:hover,
 .single-product .single_add_to_cart_button:hover,
 .fl-button:hover,
 a.fl-button:hover{
@@ -202,7 +202,7 @@ a.fl-button:hover{
   box-shadow:0 16px 30px -14px rgba(26,43,94,0.6);
   color:#fff;
 }
-.woocommerce ul.products li.product .button:active,
+ul.products li.product .button:active,
 .single-product .single_add_to_cart_button:active,
 .fl-button:active{ transform:translateY(0); }
 
@@ -218,7 +218,7 @@ a.apex-btn-outline{
 a.apex-btn-outline:hover{ background:var(--apex-band) !important; }
 
 /* Global focus ring (accessibility), navy not orange */
-.woocommerce a.button:focus-visible,
+a.button:focus-visible,
 .single_add_to_cart_button:focus-visible,
 .fl-button:focus-visible{
   outline:3px solid var(--apex-accent);
