@@ -1,0 +1,336 @@
+/* Veyra Hosted Fields — WooCommerce classic adapter styles.
+ *
+ * F286 (2026-05-23) — Conversion polish.
+ * Adds: descriptor disclosure, sticky mobile Pay button, smooth focus
+ * transitions on the BT iframe wrapper, polished wallet buttons,
+ * lightweight loading shimmer, brand-badge animation.
+ *
+ * 2026-05-25 — trust-strip rules REMOVED. The customer surface no
+ * longer renders "Encrypted in your browser" / "PCI-DSS compliant" /
+ * "Refunds processed within ..." rows, so the associated CSS was
+ * dead.
+ *
+ * SAQ-A invariants unchanged: no CSS selector reads PAN/CVC/exp; every
+ * style targets host-side elements. The BT iframe interior is opaque
+ * to host CSS by definition.
+ *
+ * Brand-clean: no "Veyra" / "Stripe" leaks in any rendered string.
+ */
+
+.veyragate-pay-fields {
+  box-sizing: border-box;
+  padding: 6px 0;
+}
+
+.veyragate-pay-fields .veyragate-pay-fields__mount {
+  box-sizing: border-box;
+  min-height: 96px;
+  background: transparent;
+  /* F286 — smooth focus transition on the BT iframe wrapper. The
+   * :focus-within selector lights up the moment the customer clicks
+   * into the iframe (BT bubbles focus to its container). */
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+  border-radius: 6px;
+}
+
+.veyragate-pay-fields .veyragate-pay-fields__mount:focus-within {
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.10);
+}
+
+.veyragate-pay-fields .veyragate-pay-fields__error {
+  color: #a4291f;
+  font-size: 13px;
+  margin-top: 6px;
+  min-height: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.veyragate-pay-fields .veyragate-pay-fields__error:not(:empty)::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.veyragate-pay-description {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #3b4036;
+  font-size: 13px;
+}
+
+/* Defensive: ensure no scrollbar / no visible border on the inner iframe. */
+.veyragate-pay-fields iframe {
+  display: block;
+  border: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Phase 4.12y2 — wallet button container. Renders above the card iframe
+ * on tier_1/2 merchants when the server-resolved policy enables wallets.
+ * Tier_3/4 merchants never see this UI (server returns
+ * wallets.enable_wallets=false). */
+.veyragate-pay-fields .veyragate-pay-wallets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  /* House style (evolabs / evobones / axis / mini-cart): 52px tall, 10px
+   * radius, SF-Pro 18/500. The 52px height also clears the WCAG 2.5.5
+   * tap-target floor (F286). */
+  min-height: 52px;
+  padding: 12px 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "Helvetica Neue", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  border-radius: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+  will-change: transform;
+}
+
+/* Wallet brand mark (inline SVG) — keep it from squishing and align it
+ * optically with the "Pay" label. */
+.veyragate-pay-fields .veyragate-pay-wallet .veyragate-pay-wallet__mark {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet span {
+  display: inline-block;
+  line-height: 1;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 4px 14px -4px rgba(15, 23, 42, 0.30);
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.55);
+  outline-offset: 2px;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet--apple {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallet--google {
+  background: #fff;
+  color: #3c4043;
+  border-color: #dadce0;
+}
+/* F47 (2026-05-19) — Google Pay removed. Apple-Pay-only mode. */
+
+.veyragate-pay-fields .veyragate-pay-wallets__divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallets__divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.veyragate-pay-fields .veyragate-pay-wallets__divider-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+/* ---------------------------------------------------------------------
+ * F286 — Descriptor disclosure (single line under Pay button)
+ *
+ * Renders "Your bank will show a charge from {merchant}." The text is
+ * inserted by classic.js on mount using SDK helper
+ * `renderDescriptorDisclosure`. Tier-aware: tier_3/4 merchants pass
+ * the mask-pool descriptor in `data-veyra-descriptor` so customers see
+ * the same string their bank will show.
+ * --------------------------------------------------------------------- */
+.veyragate-pay-fields [data-veyra-descriptor-disclosure="1"] {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------
+ * F286 — Brand badge fade animation
+ *
+ * Smoother than the F240 baseline. The badge fades + slides in/out
+ * when BT reports a new BIN-detected brand. SVG color stays inside
+ * the brand artwork (each SVG carries its own fill colors).
+ * --------------------------------------------------------------------- */
+.veyragate-pay-fields [data-veyra-card-brand-badge] {
+  transition: opacity 200ms ease, transform 200ms ease !important;
+}
+
+.veyragate-pay-fields [data-veyra-card-brand-badge][data-brand] {
+  animation: veyraPayBadgeFadeIn 200ms ease;
+}
+
+@keyframes veyraPayBadgeFadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------
+ * F286 — Loading shimmer on the BT iframe wrapper before iframe paints
+ *
+ * Renders a faint pulse over the mount target so the customer sees
+ * "something is happening" between DOMContentLoaded and BT's first
+ * paint (~150-400ms cold). The shimmer is removed by classic.js on
+ * the SDK's `ready` callback.
+ * --------------------------------------------------------------------- */
+.veyragate-pay-fields .veyragate-pay-fields__mount[data-veyra-loading="1"] {
+  position: relative;
+}
+
+.veyragate-pay-fields .veyragate-pay-fields__mount[data-veyra-loading="1"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(241, 245, 249, 0) 0%,
+    rgba(241, 245, 249, 0.6) 50%,
+    rgba(241, 245, 249, 0) 100%
+  );
+  animation: veyraPayShimmer 1.4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes veyraPayShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ---------------------------------------------------------------------
+ * F286 — Cart-page express badge (optional install)
+ *
+ * Rendered by classic.js on the cart page when the merchant calls the
+ * exposed `Veyra.renderCartExpressBadge` helper. Cart-page badges
+ * drive customers to expedited checkout. Hidden when there's no badge
+ * element on the page.
+ * --------------------------------------------------------------------- */
+.veyragate-pay-cart-express {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 6px 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font: 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #15803d;
+}
+
+.veyragate-pay-cart-express svg {
+  flex: 0 0 12px;
+  color: #15803d;
+}
+
+/* ---------------------------------------------------------------------
+ * Apple Pay express (0.5.7) — mini-cart drawer button.
+ *
+ * Injected by minicart.js into the theme's mini-cart drawer container.
+ * 56px black Apple Pay button matching the in-app express surface.
+ * Additive only — does not alter any existing rule.
+ * ------------------------------------------------------------------- */
+.veyragate-pay-minicart-wallet {
+  margin: 12px 0 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.veyragate-pay-minicart-wallet__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 56px;
+  border: 0;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "Helvetica Neue", Arial, sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: opacity 0.2s ease, filter 0.14s ease;
+}
+
+.veyragate-pay-minicart-wallet__btn:hover {
+  filter: brightness(1.08);
+}
+
+.veyragate-pay-minicart-wallet__btn:active {
+  filter: brightness(0.94);
+}
+
+.veyragate-pay-minicart-wallet__btn:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.55);
+  outline-offset: 2px;
+}
+
+.veyragate-pay-minicart-wallet__btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.veyragate-pay-minicart-wallet__btn svg {
+  flex: 0 0 auto;
+}
